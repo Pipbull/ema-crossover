@@ -1,0 +1,66 @@
+#property copyright "Copyright 2023, MetaQuotes Ltd."
+#property link      "https://www.mql5.com"
+#property version   "1.00"
+
+#include<Trade\Trade.mqh>
+
+CTrade trade;
+
+
+void OnTick()
+  {
+
+double myMovingAverageArray1[],myMovingAverageArray2[];
+
+int MovingAverageDefinition1 = iMA(_Symbol,_Period,20,0,MODE_EMA,PRICE_CLOSE);
+
+int MovingAverageDefinition2 = iMA(_Symbol,_Period,50,0,MODE_EMA,PRICE_CLOSE);
+
+ArraySetAsSeries(myMovingAverageArray1,true);
+
+ArraySetAsSeries(myMovingAverageArray2,true);
+
+CopyBuffer(MovingAverageDefinition1,0,0,3,myMovingAverageArray1);
+
+CopyBuffer(MovingAverageDefinition2,0,0,3,myMovingAverageArray2);
+
+double myMovingAverageValue1=myMovingAverageArray1[0];
+
+double myMovingAverageValue2=myMovingAverageArray2[0];
+
+double Ask=NormalizeDouble(SymbolInfoDouble(_Symbol,SYMBOL_ASK),_Digits);
+ double bid = NormalizeDouble(SymbolInfoDouble(_Symbol ,SYMBOL_BID),_Digits);
+ 
+if(
+      (myMovingAverageArray1[0]>myMovingAverageArray2[0])
+   && (myMovingAverageArray1[1]<myMovingAverageArray2[1])
+   && PositionsTotal()==0
+   )
+   {
+   
+    trade.Buy(0.10,NULL,Ask,Ask-50000*_Point,Ask+150000*_Point,NULL);
+  // trade.Sell(0.10,NULL,bid,bid+50000*_Point,bid-50000*_Point,NULL);
+   
+   }
+   
+   if(
+      (myMovingAverageArray1[0]<myMovingAverageArray2[0])
+   && (myMovingAverageArray1[1]>myMovingAverageArray2[1])
+    && PositionsTotal()==0
+   )
+   {
+   
+   trade.Sell(0.10,NULL,bid,bid+50000*_Point,bid-150000*_Point,NULL);
+    // trade.Buy(0.10,NULL,Ask,Ask-50000*_Point,Ask+50000*_Point,NULL);
+   
+   }
+
+
+
+
+
+
+   
+  }//end of ontick function begin of global scope
+  
+
